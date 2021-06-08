@@ -85,6 +85,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>jasperReporter</finalName>
 		<plugins>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
