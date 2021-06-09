@@ -54,9 +54,11 @@ public class App {
 			xlsExporter.exportReport();
 
 		} catch (JRException e) {
-			System.out.println(e);
+			System.err.println(e);
+			System.exit(1);
 		} catch (Exception e) {
-			System.out.println(e);
+			System.err.println(e);
+			System.exit(1);
 		}
 	}
 }
