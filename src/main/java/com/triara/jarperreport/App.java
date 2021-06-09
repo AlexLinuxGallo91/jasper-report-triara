@@ -30,7 +30,8 @@ public class App {
 					argBean.getPassword());
 
 			JasperPrint jasperPrint = JasperFillManager.fillReport(argBean.getJasperFilePath(), null, conn);
-			fileName = jasperPrint.getName();
+			File pathFileJasper = new File(argBean.getJasperFilePath());
+			fileName = pathFileJasper.getName().substring(0, pathFileJasper.getName().lastIndexOf('.'));
 
 			Path baseDestPath = Paths.get(argBean.getDestinationPathReport());
 			Path absoluteDestPath = Paths.get(baseDestPath.toString(), fileName);
