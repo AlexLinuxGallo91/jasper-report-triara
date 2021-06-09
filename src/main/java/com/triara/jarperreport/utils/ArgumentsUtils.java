@@ -57,7 +57,8 @@ public class ArgumentsUtils {
 
 //		verifica la ip o localhost
 		if (!JdbcUtils.isValidIp(ipLocalhost)) {
-			System.err.println("Ip %s invalido. Favor de establecer una direccion ip valido.");
+			System.err.println(
+					String.format("Ip %s invalido. Favor de establecer una direccion ip valido.", ipLocalhost));
 			System.exit(1);
 		}
 
