@@ -22,7 +22,7 @@ import net.sf.jasperreports.export.SimpleXlsReportConfiguration;
 
 public class App {
 	public static void main(String[] args) {
-		String fileName = Constants.EMPTY_STRING;
+		String fileName;
 		try {
 			ArgumentDestinationBean argBean = ArgumentsUtils.validateArguments(args);
 			JdbcUtils.loadJdbcClass(argBean);
@@ -52,7 +52,6 @@ public class App {
 			xlsConfig.setCollapseRowSpan(false);
 			xlsExporter.setConfiguration(xlsConfig);
 			xlsExporter.exportReport();
-
 		} catch (JRException e) {
 			System.err.println(e);
 			System.exit(1);
