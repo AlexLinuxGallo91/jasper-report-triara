@@ -1,63 +1,43 @@
 package com.triara.jarperreport;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.sql.Connection;
-import java.sql.DriverManager;
-
-import com.triara.jarperreport.beans.ArgumentDestinationBean;
+import com.triara.jarperreport.cmd.CmdHelper;
+import com.triara.jarperreport.constants.CmdChoices;
 import com.triara.jarperreport.constants.Constants;
-import com.triara.jarperreport.utils.ArgumentsUtils;
-import com.triara.jarperreport.utils.JdbcUtils;
-
+import com.triara.jarperreport.reporter.JasperReporter;
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperExportManager;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.export.JRXlsExporter;
-import net.sf.jasperreports.export.SimpleExporterInput;
-import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
-import net.sf.jasperreports.export.SimpleXlsReportConfiguration;
+import org.apache.commons.cli.MissingArgumentException;
+import org.apache.commons.cli.ParseException;
+
+import java.sql.SQLException;
 
 public class App {
-	public static void main(String[] args) {
-		String fileName;
-		try {
-			ArgumentDestinationBean argBean = ArgumentsUtils.validateArguments(args);
-			JdbcUtils.loadJdbcClass(argBean);
-			Connection conn = DriverManager.getConnection(JdbcUtils.generateJdbcUrl(argBean), argBean.getUsername(),
-					argBean.getPassword());
+    public static void main(String[] args) {
+        String messageError = Constants.EMPTY_STRING;
+        boolean executionWasSuccess = true;
 
-			JasperPrint jasperPrint = JasperFillManager.fillReport(argBean.getJasperFilePath(), null, conn);
-			File pathFileJasper = new File(argBean.getJasperFilePath());
-			fileName = pathFileJasper.getName().substring(0, pathFileJasper.getName().lastIndexOf('.'));
+        try {
+            CmdHelper.initCmdArguments(args);
+            CmdChoices cmdChoice = CmdHelper.validateCmdArgs();
+            JasperReporter jasperReporter = new JasperReporter();
+            jasperReporter.verifyEnumTask(cmdChoice, CmdHelper.getCmd());
 
-			Path baseDestPath = Paths.get(argBean.getDestinationPathReport());
-			Path absoluteDestPath = Paths.get(baseDestPath.toString(), fileName);
+        } catch (MissingArgumentException e) {
+            messageError = e.getMessage();
+            executionWasSuccess = false;
+        } catch (ParseException e) {
+            messageError = e.getMessage();
+            executionWasSuccess = false;
+        } catch (JRException e) {
+            messageError = e.getMessage();
+            executionWasSuccess = false;
+        } catch (SQLException e) {
+            messageError = e.getMessage();
+            executionWasSuccess = false;
+        }
 
-			String destPathPdfReport = absoluteDestPath.toString().concat(".pdf");
-			String destPathHtmlReport = absoluteDestPath.toString().concat(".html");
-			String destPathXlsReport = absoluteDestPath.toString().concat(".xls");
-
-			JasperExportManager.exportReportToPdfFile(jasperPrint, destPathPdfReport);
-			JasperExportManager.exportReportToHtmlFile(jasperPrint, destPathHtmlReport);
-
-			JRXlsExporter xlsExporter = new JRXlsExporter();
-			xlsExporter.setExporterInput(new SimpleExporterInput(jasperPrint));
-			File xlsOutputFile = new File(destPathXlsReport);
-			xlsExporter.setExporterOutput(new SimpleOutputStreamExporterOutput(xlsOutputFile));
-			SimpleXlsReportConfiguration xlsConfig = new SimpleXlsReportConfiguration();
-			xlsConfig.setDetectCellType(true);
-			xlsConfig.setCollapseRowSpan(false);
-			xlsExporter.setConfiguration(xlsConfig);
-			xlsExporter.exportReport();
-		} catch (JRException e) {
-			System.err.println(e);
-			System.exit(1);
-		} catch (Exception e) {
-			System.err.println(e);
-			System.exit(1);
-		}
-	}
+        if (!executionWasSuccess) {
+            System.out.println(messageError);
+            System.exit(1);
+        }
+    }
 }
