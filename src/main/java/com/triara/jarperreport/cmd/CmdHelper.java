@@ -37,8 +37,11 @@ public class CmdHelper {
     private static final Option CONNECTION = Option.builder(Constants.CMD_CONNECTION).hasArg(false).argName(
             "Connection").desc("Indicador para la conexion a la BD").build();
 
-    private static final Option LIST_PARAMS = Option.builder(Constants.GET_LIST_PARAMS).hasArg(false).argName(
+    private static final Option LIST_PARAMS = Option.builder(Constants.CMD_GET_LIST_PARAMS).hasArg(false).argName(
             "Param List").desc("Lista de parametros del reporte Jasper").build();
+
+    private static final Option CHECK_DB_CONNECTION = Option.builder(Constants.CMD_CHECK_DB_CONN).hasArg(false).argName(
+            "Check DB connection").desc("Verifica la conexion a la Base de datos").build();
 
     private static Options options;
     private static CommandLine cmd;
@@ -60,6 +63,7 @@ public class CmdHelper {
         options.addOption(CmdHelper.FORMATS);
         options.addOption(CmdHelper.CONNECTION);
         options.addOption(CmdHelper.LIST_PARAMS);
+        options.addOption(CmdHelper.CHECK_DB_CONNECTION);
 
         CmdHelper.cmd = commandLineParser.parse(options, args);
         CmdHelper.helpFormatter = new HelpFormatter();
@@ -75,13 +79,15 @@ public class CmdHelper {
                 }
             }
             return CmdChoices.OBTENER_REPORTE_JASPER;
-        } else if (CmdHelper.getCmd().hasOption(Constants.GET_LIST_PARAMS)) {
+        } else if (CmdHelper.getCmd().hasOption(Constants.CMD_GET_LIST_PARAMS)) {
             if (!CmdHelper.getCmd().hasOption(Constants.CMD_PATH_JASPER_REPORT)) {
                 System.err.println(String.format("Parametro '-%s' faltante. Favor de establecerlo.",
                         Constants.CMD_PATH_JASPER_REPORT));
                 return CmdChoices.OPCION_INDEFINIDA;
             }
             return CmdChoices.OBTENER_LISTA_PARAMETROS_REPORTE_JASPER;
+        } else if (CmdHelper.getCmd().hasOption(Constants.CMD_CHECK_DB_CONN)) {
+            return CmdChoices.COMPROBAR_CONEXION_BD;
         } else {
             return CmdChoices.OPCION_INDEFINIDA;
         }

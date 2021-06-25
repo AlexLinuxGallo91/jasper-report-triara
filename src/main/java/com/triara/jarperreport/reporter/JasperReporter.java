@@ -84,6 +84,13 @@ public class JasperReporter {
         xlsExporter.exportReport();
     }
 
+    public boolean correctDbConnection(ArgumentDestinationBean bean) throws SQLException {
+        DatabaseConnection.initDbConnection(bean);
+        boolean isConnected = !DatabaseConnection.getDbConnection().isClosed();
+        DatabaseConnection.closeConnection();
+        return isConnected;
+    }
+
     public String getJasperReportParamsJson(ArgumentDestinationBean bean) throws JRException {
         this.jasperFilePath = new File(bean.getJasperFilePath());
         JasperReport jasperReport = (JasperReport) JRLoader.loadObject(this.jasperFilePath);
@@ -113,6 +120,10 @@ public class JasperReporter {
             case OBTENER_LISTA_PARAMETROS_REPORTE_JASPER:
                 bean = ArgumentsUtils.validateArgumentsShowParamsJson(cmd);
                 System.out.println(this.getJasperReportParamsJson(bean));
+                break;
+            case COMPROBAR_CONEXION_BD:
+                bean = ArgumentsUtils.validateArgumentsDatabaseConnection(cmd);
+                System.out.println(this.correctDbConnection(bean));
                 break;
             case OPCION_INDEFINIDA:
                 CmdHelper.printHelper();

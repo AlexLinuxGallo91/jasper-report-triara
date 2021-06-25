@@ -47,6 +47,62 @@ public class ArgumentsUtils {
                 Constants.EMPTY_STRING, new String[]{});
     }
 
+    public static ArgumentDestinationBean validateArgumentsDatabaseConnection(CommandLine cmd) {
+
+        String driver = cmd.getOptionValue(Constants.CMD_OPT_DRIVER);
+        String ipLocalhost = cmd.getOptionValue(Constants.CMD_IP_LOCALHOST);
+        String port = cmd.getOptionValue(Constants.CMD_PORT);
+        String databaseName = cmd.getOptionValue(Constants.CMD_DB_NAME);
+        String username = cmd.getOptionValue(Constants.CMD_USER_NAME);
+        String password = cmd.getOptionValue(Constants.CMD_PASSWORD);
+        ArgumentDestinationBean argBean;
+
+//		verifica el driver
+        if (!JdbcUtils.isValidDriver(driver)) {
+            System.err.println(
+                    String.format("Driver %s invalido, favor de establece alguno de los siguientes drivers: %s", driver,
+                            Constants.DRIVER_LIST.toString()));
+            System.exit(1);
+        }
+
+//		verifica la ip o localhost
+        if (!JdbcUtils.isValidIp(ipLocalhost)) {
+            System.err.println(
+                    String.format("Ip %s invalido. Favor de establecer una direccion ip valido.", ipLocalhost));
+            System.exit(1);
+        }
+
+//		verifica el puerto
+        if (!JdbcUtils.isValidPort(port)) {
+            System.err.println("Favor de establecer solo digitos en el parametro port.");
+            System.exit(1);
+        }
+
+//		verifica el nombre de la BD
+        if (!JdbcUtils.isValidString(databaseName)) {
+            System.err.println(
+                    String.format("Databasename %s invalido, favor de establecerlo correctamente.", databaseName));
+            System.exit(1);
+        }
+
+//		verifica el nombre del usuario
+        if (!JdbcUtils.isValidString(username)) {
+            System.err.println(String.format("Username %s invalido, favor de establecerlo correctamente.", username));
+            System.exit(1);
+        }
+
+//		verifica el password de la BD
+        if (!JdbcUtils.isValidString(password)) {
+            System.err.println(String.format("password %s invalido, favor de establecerlo correctamente.", password));
+            System.exit(1);
+        }
+
+        argBean = new ArgumentDestinationBean(driver, ipLocalhost, port, databaseName, username, password,
+                Constants.EMPTY_STRING, Constants.EMPTY_STRING, new String[]{});
+
+        return argBean;
+    }
+
     public static ArgumentDestinationBean validateArgumentsExportJasperReport(CommandLine cmd) {
 
         String driver = cmd.getOptionValue(Constants.CMD_OPT_DRIVER);
@@ -124,6 +180,7 @@ public class ArgumentsUtils {
             System.exit(1);
         }
 
+//        verifica que al menos se haya establecido un formato a exportar en el reporte
         if (!ArgumentsUtils.checkLengthArray(formatos)) {
             System.err.println("Favor de establecer al menos un formato a exportar el reporte.");
             System.exit(1);
