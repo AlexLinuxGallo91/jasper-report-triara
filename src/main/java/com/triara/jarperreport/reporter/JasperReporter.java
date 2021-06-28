@@ -22,6 +22,7 @@ import java.io.File;
 import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Map;
 
 public class JasperReporter {
 
@@ -40,6 +41,31 @@ public class JasperReporter {
         this.jasperDestDirPath = new File(bean.getDestinationPathReport());
 
         this.jasperPrint = JasperFillManager.fillReport(bean.getJasperFilePath(), null,
+                DatabaseConnection.getDbConnection());
+
+        this.fileName = FileUtils.getFileNameWithoutExt(this.jasperFilePath.getName());
+
+        for (String argReportFormat : bean.getFormats()) {
+            if (argReportFormat.trim().equalsIgnoreCase(Constants.PDF_EXT_FILE)) {
+                this.generatePdfReport();
+            } else if (argReportFormat.trim().equalsIgnoreCase(Constants.HTML_EXT_FILE)) {
+                this.generateHtmlReport();
+            } else if (argReportFormat.trim().equalsIgnoreCase(Constants.CSV_EXT_FILE)) {
+                this.generateCsvReport();
+            }
+        }
+
+        DatabaseConnection.closeConnection();
+    }
+
+    public void generateReportsWithParameters(
+            ArgumentDestinationBean bean, Map<String, Object> parameters) throws SQLException, JRException {
+        DatabaseConnection.initDbConnection(bean);
+
+        this.jasperFilePath = new File(bean.getJasperFilePath());
+        this.jasperDestDirPath = new File(bean.getDestinationPathReport());
+
+        this.jasperPrint = JasperFillManager.fillReport(bean.getJasperFilePath(), parameters,
                 DatabaseConnection.getDbConnection());
 
         this.fileName = FileUtils.getFileNameWithoutExt(this.jasperFilePath.getName());
@@ -113,19 +139,23 @@ public class JasperReporter {
         ArgumentDestinationBean bean;
 
         switch (cmdChoice) {
-            case OBTENER_REPORTE_JASPER:
+            case GENERATE_JASPER_REPORT:
                 bean = ArgumentsUtils.validateArgumentsExportJasperReport(cmd);
                 this.generateReports(bean);
                 break;
-            case OBTENER_LISTA_PARAMETROS_REPORTE_JASPER:
+            case GENERATE_JASPER_REPORT_WITH_PARAMETERS:
+                bean = ArgumentsUtils.validateArgumentsExportJasperReportWithParameters(cmd);
+                this.getJasperReportParamsJson(bean);
+                break;
+            case GET_JASPER_REPORT_LIST_PARAMETERS:
                 bean = ArgumentsUtils.validateArgumentsShowParamsJson(cmd);
                 System.out.println(this.getJasperReportParamsJson(bean));
                 break;
-            case COMPROBAR_CONEXION_BD:
+            case VERIFY_DB_CONNECTION:
                 bean = ArgumentsUtils.validateArgumentsDatabaseConnection(cmd);
                 System.out.println(this.correctDbConnection(bean));
                 break;
-            case OPCION_INDEFINIDA:
+            case UNKNOWN_CHOICE:
                 CmdHelper.printHelper();
                 System.exit(1);
                 break;

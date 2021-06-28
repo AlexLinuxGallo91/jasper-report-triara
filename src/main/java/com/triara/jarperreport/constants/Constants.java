@@ -30,6 +30,7 @@ public class Constants {
     public static final String CMD_FORMATS = "format";
     public static final String CMD_CONNECTION = "conn";
     public static final String CMD_GET_LIST_PARAMS = "params";
+    public static final String CMD_SET_IN_REPORT_PARAMS = "setparams";
     public static final String CMD_CHECK_DB_CONN = "checkdbconn";
 
     public static final String[] JASPER_FILE_FORMATS = new String[]{"PDF", "HTML", "CSV"};

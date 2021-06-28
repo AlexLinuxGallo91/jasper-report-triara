@@ -13,25 +13,25 @@ public class CmdHelper {
             .desc("Numero de puerto a la BD").build();
 
     private static final Option IP_LOCALHOST = Option.builder(Constants.CMD_IP_LOCALHOST).hasArg().argName(
-            "localhost - IP").desc("Localhost o IP de la conexion a la BD").build();
+            "ip").desc("Localhost o IP de la conexion a la BD").build();
 
-    private static final Option DB_NAME = Option.builder(Constants.CMD_DB_NAME).hasArg().argName("Database name")
+    private static final Option DB_NAME = Option.builder(Constants.CMD_DB_NAME).hasArg().argName("db name")
             .desc("Nombre de la BD").build();
 
-    private static final Option USER_NAME = Option.builder(Constants.CMD_USER_NAME).hasArg().argName("Username")
+    private static final Option USER_NAME = Option.builder(Constants.CMD_USER_NAME).hasArg().argName("username")
             .desc("Username de la conexion a la BD").build();
 
-    private static final Option PASSWORD = Option.builder(Constants.CMD_PASSWORD).hasArg().argName("Password")
+    private static final Option PASSWORD = Option.builder(Constants.CMD_PASSWORD).hasArg().argName("password")
             .desc("Password de la conexion a la BD").build();
 
     private static final Option PATH_JASPER_REPORT = Option.builder(Constants.CMD_PATH_JASPER_REPORT).hasArg().argName(
-            "Path Jasper Report").desc("Ruta absoluta del reporte Jasper").build();
+            ".jasper path").desc("Ruta absoluta del reporte Jasper").build();
 
     private static final Option PATH_DEST_REPORTS = Option.builder(Constants.CMD_PATH_DEST_REPORTS).hasArg()
-            .argName("Dest path created " + "reports")
+            .argName("dest path")
             .desc("Ruta absoluta en donde se guardaran los reportes").build();
 
-    private static final Option FORMATS = Option.builder(Constants.CMD_FORMATS).hasArgs().argName("Report formats")
+    private static final Option FORMATS = Option.builder(Constants.CMD_FORMATS).hasArgs().argName("format")
             .desc("Formatos de los reportes a exportar").numberOfArgs(Option.UNLIMITED_VALUES).build();
 
     private static final Option CONNECTION = Option.builder(Constants.CMD_CONNECTION).hasArg(false).argName(
@@ -41,7 +41,10 @@ public class CmdHelper {
             "Param List").desc("Lista de parametros del reporte Jasper").build();
 
     private static final Option CHECK_DB_CONNECTION = Option.builder(Constants.CMD_CHECK_DB_CONN).hasArg(false).argName(
-            "Check DB connection").desc("Verifica la conexion a la Base de datos").build();
+            "Check DB conn").desc("Verifica la conexion a la Base de datos").build();
+
+    private static final Option IN_PARAMS = Option.builder(Constants.CMD_SET_IN_REPORT_PARAMS).hasArgs().argName(
+            "json params").desc("Lista de parametros necesarios para la generacion del reporte Jasper").build();
 
     private static Options options;
     private static CommandLine cmd;
@@ -64,6 +67,7 @@ public class CmdHelper {
         options.addOption(CmdHelper.CONNECTION);
         options.addOption(CmdHelper.LIST_PARAMS);
         options.addOption(CmdHelper.CHECK_DB_CONNECTION);
+        options.addOption(CmdHelper.IN_PARAMS);
 
         CmdHelper.cmd = commandLineParser.parse(options, args);
         CmdHelper.helpFormatter = new HelpFormatter();
@@ -75,21 +79,25 @@ public class CmdHelper {
             for (String option : Constants.LIST_NECESSARY_GEN_REPORT_PARAMS) {
                 if (!CmdHelper.getCmd().hasOption(option)) {
                     System.err.println(String.format("Parametro '-%s' faltante. Favor de establecerlo.", option));
-                    return CmdChoices.OPCION_INDEFINIDA;
+                    return CmdChoices.UNKNOWN_CHOICE;
                 }
             }
-            return CmdChoices.OBTENER_REPORTE_JASPER;
+            if (CmdHelper.getCmd().hasOption(Constants.CMD_SET_IN_REPORT_PARAMS)) {
+                return CmdChoices.GENERATE_JASPER_REPORT_WITH_PARAMETERS;
+            } else {
+                return CmdChoices.GENERATE_JASPER_REPORT;
+            }
         } else if (CmdHelper.getCmd().hasOption(Constants.CMD_GET_LIST_PARAMS)) {
             if (!CmdHelper.getCmd().hasOption(Constants.CMD_PATH_JASPER_REPORT)) {
                 System.err.println(String.format("Parametro '-%s' faltante. Favor de establecerlo.",
                         Constants.CMD_PATH_JASPER_REPORT));
-                return CmdChoices.OPCION_INDEFINIDA;
+                return CmdChoices.UNKNOWN_CHOICE;
             }
-            return CmdChoices.OBTENER_LISTA_PARAMETROS_REPORTE_JASPER;
+            return CmdChoices.GET_JASPER_REPORT_LIST_PARAMETERS;
         } else if (CmdHelper.getCmd().hasOption(Constants.CMD_CHECK_DB_CONN)) {
-            return CmdChoices.COMPROBAR_CONEXION_BD;
+            return CmdChoices.VERIFY_DB_CONNECTION;
         } else {
-            return CmdChoices.OPCION_INDEFINIDA;
+            return CmdChoices.UNKNOWN_CHOICE;
         }
     }
 
