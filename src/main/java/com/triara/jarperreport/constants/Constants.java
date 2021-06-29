@@ -51,6 +51,15 @@ public class Constants {
             Constants.CMD_FORMATS
     };
 
+    public static final String[] LIST_NECESSARY_DB_CONNECTION_PARAMS = new String[]{
+            Constants.CMD_OPT_DRIVER,
+            Constants.CMD_IP_LOCALHOST,
+            Constants.CMD_PORT,
+            Constants.CMD_DB_NAME,
+            Constants.CMD_USER_NAME,
+            Constants.CMD_PASSWORD
+    };
+
     public static final String[] LIST_TASK_COMMANDS = new String[] {
             Constants.CMD_CONNECTION,
             Constants.CMD_CHECK_DB_CONN,

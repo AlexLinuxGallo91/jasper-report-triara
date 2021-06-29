@@ -103,6 +103,12 @@ public class CmdHelper {
             }
             return CmdChoices.GET_JASPER_REPORT_LIST_PARAMETERS;
         } else if (CmdHelper.getCmd().hasOption(Constants.CMD_CHECK_DB_CONN)) {
+            for (String option : Constants.LIST_NECESSARY_DB_CONNECTION_PARAMS) {
+                if (!CmdHelper.getCmd().hasOption(option)) {
+                    System.err.println(String.format("Parametro '-%s' faltante. Favor de establecerlo.", option));
+                    return CmdChoices.UNKNOWN_CHOICE;
+                }
+            }
             return CmdChoices.VERIFY_DB_CONNECTION;
         } else {
             return CmdChoices.UNKNOWN_CHOICE;

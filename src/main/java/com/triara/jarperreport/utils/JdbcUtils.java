@@ -73,7 +73,7 @@ public class JdbcUtils {
 			if (argBean.getDriver().toUpperCase().equals(Constants.DRIVER_MSSQL)) {
 				classLoaded = Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 			} else if (argBean.getDriver().toUpperCase().equals(Constants.DRIVER_MYSQL)) {
-				classLoaded = Class.forName("com.mysql.jdbc.Driver");
+				classLoaded = Class.forName("com.mysql.cj.jdbc.Driver");
 			} else if (argBean.getDriver().toUpperCase().equals(Constants.DRIVER_POSTGRESQL)) {
 				classLoaded = Class.forName("org.postgresql.Driver");
 			} else if (argBean.getDriver().toUpperCase().equals(Constants.DRIVER_ORACLE)) {
