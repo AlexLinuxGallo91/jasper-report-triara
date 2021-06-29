@@ -51,4 +51,10 @@ public class Constants {
             Constants.CMD_FORMATS
     };
 
+    public static final String[] LIST_TASK_COMMANDS = new String[] {
+            Constants.CMD_CONNECTION,
+            Constants.CMD_CHECK_DB_CONN,
+            Constants.CMD_GET_LIST_PARAMS
+    };
+
 }

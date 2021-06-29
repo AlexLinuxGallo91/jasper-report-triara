@@ -74,8 +74,16 @@ public class CmdHelper {
     }
 
     public static CmdChoices validateCmdArgs() {
+        int countMultipleTaskCommands = 0;
 
-        if (CmdHelper.getCmd().hasOption(Constants.CMD_CONNECTION)) {
+        for (String command : Constants.LIST_TASK_COMMANDS) {
+            if (CmdHelper.getCmd().hasOption(command)) {
+                countMultipleTaskCommands++;
+            }
+        }
+        if (countMultipleTaskCommands > 1) {
+            return CmdChoices.UNKNOWN_CHOICE;
+        } else if (CmdHelper.getCmd().hasOption(Constants.CMD_CONNECTION)) {
             for (String option : Constants.LIST_NECESSARY_GEN_REPORT_PARAMS) {
                 if (!CmdHelper.getCmd().hasOption(option)) {
                     System.err.println(String.format("Parametro '-%s' faltante. Favor de establecerlo.", option));

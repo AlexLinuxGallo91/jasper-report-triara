@@ -2,6 +2,7 @@ package com.triara.jarperreport.reporter;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import com.triara.jarperreport.beans.ArgumentDestinationBean;
 import com.triara.jarperreport.beans.JasperParamJsonBean;
 import com.triara.jarperreport.cmd.CmdHelper;
@@ -10,6 +11,7 @@ import com.triara.jarperreport.constants.Constants;
 import com.triara.jarperreport.db_connection.DatabaseConnection;
 import com.triara.jarperreport.utils.ArgumentsUtils;
 import com.triara.jarperreport.utils.FileUtils;
+import com.triara.jarperreport.utils.JsonUtils;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.export.JRXlsExporter;
 import net.sf.jasperreports.engine.util.JRLoader;
@@ -58,14 +60,15 @@ public class JasperReporter {
         DatabaseConnection.closeConnection();
     }
 
-    public void generateReportsWithParameters(
-            ArgumentDestinationBean bean, Map<String, Object> parameters) throws SQLException, JRException {
+    public void generateReportsWithParameters(ArgumentDestinationBean bean) throws SQLException, JRException {
         DatabaseConnection.initDbConnection(bean);
 
         this.jasperFilePath = new File(bean.getJasperFilePath());
         this.jasperDestDirPath = new File(bean.getDestinationPathReport());
 
-        this.jasperPrint = JasperFillManager.fillReport(bean.getJasperFilePath(), parameters,
+        Map<String, Object> jasperParameters = ArgumentsUtils.getParametersFromListArg(bean.getJasperParameters());
+
+        this.jasperPrint = JasperFillManager.fillReport(bean.getJasperFilePath(), jasperParameters,
                 DatabaseConnection.getDbConnection());
 
         this.fileName = FileUtils.getFileNameWithoutExt(this.jasperFilePath.getName());
@@ -145,7 +148,7 @@ public class JasperReporter {
                 break;
             case GENERATE_JASPER_REPORT_WITH_PARAMETERS:
                 bean = ArgumentsUtils.validateArgumentsExportJasperReportWithParameters(cmd);
-                this.getJasperReportParamsJson(bean);
+                this.generateReportsWithParameters(bean);
                 break;
             case GET_JASPER_REPORT_LIST_PARAMETERS:
                 bean = ArgumentsUtils.validateArgumentsShowParamsJson(cmd);

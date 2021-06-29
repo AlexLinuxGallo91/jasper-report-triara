@@ -1,9 +1,5 @@
 package com.triara.jarperreport.beans;
 
-import com.triara.jarperreport.cmd.CmdHelper;
-
-import java.util.Map;
-
 public class ArgumentDestinationBean {
 
     private String driver;
@@ -15,7 +11,7 @@ public class ArgumentDestinationBean {
     private String jasperFilePath;
     private String destinationPathReport;
     private String[] formats;
-    private String jsonListParams;
+    private String[] jasperParameters;
 
     public ArgumentDestinationBean() {
     }
@@ -23,7 +19,7 @@ public class ArgumentDestinationBean {
     public ArgumentDestinationBean(
             String driver, String localhost, String port, String databaseName, String username,
             String password, String jasperFilePath, String destinationPathReport, String[] formats,
-            String jsonListParams) {
+            String[] jasperParameters) {
         this.driver = driver;
         this.localhost = localhost;
         this.port = port;
@@ -33,7 +29,7 @@ public class ArgumentDestinationBean {
         this.jasperFilePath = jasperFilePath;
         this.destinationPathReport = destinationPathReport;
         this.formats = formats;
-        this.jsonListParams = jsonListParams;
+        this.jasperParameters = jasperParameters;
     }
 
     public String getDriver() {
@@ -108,12 +104,12 @@ public class ArgumentDestinationBean {
         this.destinationPathReport = destinationPathReport;
     }
 
-    public String getJsonListParams() {
-        return jsonListParams;
+    public String[] getJasperParameters() {
+        return jasperParameters;
     }
 
-    public void setJsonListParams(String jsonListParams) {
-        this.jsonListParams = jsonListParams;
+    public void setJasperParameters(String[] jasperParameters) {
+        this.jasperParameters = jasperParameters;
     }
 
     public String toString() {
