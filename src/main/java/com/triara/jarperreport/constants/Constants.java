@@ -1,7 +1,5 @@
 package com.triara.jarperreport.constants;
 
-import com.triara.jarperreport.cmd.CmdHelper;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -33,11 +31,12 @@ public class Constants {
     public static final String CMD_SET_IN_REPORT_PARAMS = "setparams";
     public static final String CMD_CHECK_DB_CONN = "checkdbconn";
 
-    public static final String[] JASPER_FILE_FORMATS = new String[]{"PDF", "HTML", "CSV"};
-
     public static final String PDF_EXT_FILE = "PDF";
     public static final String HTML_EXT_FILE = "HTML";
-    public static final String CSV_EXT_FILE = "CSV";
+    public static final String XLS_EXT_FILE = "XLS";
+
+    public static final String[] JASPER_FILE_FORMATS = new String[]{
+            Constants.PDF_EXT_FILE, Constants.HTML_EXT_FILE, Constants.XLS_EXT_FILE};
 
     public static final String[] LIST_NECESSARY_GEN_REPORT_PARAMS = new String[]{
             Constants.CMD_OPT_DRIVER,

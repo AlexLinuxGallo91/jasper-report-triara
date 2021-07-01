@@ -2,7 +2,6 @@ package com.triara.jarperreport.reporter;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
 import com.triara.jarperreport.beans.ArgumentDestinationBean;
 import com.triara.jarperreport.beans.JasperParamJsonBean;
 import com.triara.jarperreport.cmd.CmdHelper;
@@ -11,7 +10,6 @@ import com.triara.jarperreport.constants.Constants;
 import com.triara.jarperreport.db_connection.DatabaseConnection;
 import com.triara.jarperreport.utils.ArgumentsUtils;
 import com.triara.jarperreport.utils.FileUtils;
-import com.triara.jarperreport.utils.JsonUtils;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.export.JRXlsExporter;
 import net.sf.jasperreports.engine.util.JRLoader;
@@ -52,8 +50,8 @@ public class JasperReporter {
                 this.generatePdfReport();
             } else if (argReportFormat.trim().equalsIgnoreCase(Constants.HTML_EXT_FILE)) {
                 this.generateHtmlReport();
-            } else if (argReportFormat.trim().equalsIgnoreCase(Constants.CSV_EXT_FILE)) {
-                this.generateCsvReport();
+            } else if (argReportFormat.trim().equalsIgnoreCase(Constants.XLS_EXT_FILE)) {
+                this.generateXlsReport();
             }
         }
 
@@ -78,8 +76,8 @@ public class JasperReporter {
                 this.generatePdfReport();
             } else if (argReportFormat.trim().equalsIgnoreCase(Constants.HTML_EXT_FILE)) {
                 this.generateHtmlReport();
-            } else if (argReportFormat.trim().equalsIgnoreCase(Constants.CSV_EXT_FILE)) {
-                this.generateCsvReport();
+            } else if (argReportFormat.trim().equalsIgnoreCase(Constants.XLS_EXT_FILE)) {
+                this.generateXlsReport();
             }
         }
 
@@ -98,9 +96,9 @@ public class JasperReporter {
         JasperExportManager.exportReportToHtmlFile(this.jasperPrint, destPathFileHtml);
     }
 
-    private void generateCsvReport() throws JRException {
+    private void generateXlsReport() throws JRException {
         File xlsOutputReport = new File(Paths.get(
-                this.jasperDestDirPath.getAbsolutePath(), this.fileName).toString().concat(".csv"));
+                this.jasperDestDirPath.getAbsolutePath(), this.fileName).toString().concat(".xls"));
         JRXlsExporter xlsExporter = new JRXlsExporter();
 
         xlsExporter.setExporterInput(new SimpleExporterInput(this.jasperPrint));
@@ -113,10 +111,17 @@ public class JasperReporter {
         xlsExporter.exportReport();
     }
 
-    public boolean correctDbConnection(ArgumentDestinationBean bean) throws SQLException {
-        DatabaseConnection.initDbConnection(bean);
-        boolean isConnected = !DatabaseConnection.getDbConnection().isClosed();
-        DatabaseConnection.closeConnection();
+    public boolean correctDbConnection(ArgumentDestinationBean bean) {
+        boolean isConnected;
+
+        try {
+            DatabaseConnection.initDbConnection(bean);
+            isConnected = !DatabaseConnection.getDbConnection().isClosed();
+            DatabaseConnection.closeConnection();
+        } catch (SQLException e) {
+            isConnected = false;
+        }
+
         return isConnected;
     }
 
